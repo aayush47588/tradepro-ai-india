@@ -1,0 +1,995 @@
+<!DOCTYPE html>
+<html lang="en" data-color-scheme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TradePro AI India - Advanced AI Trading Platform for NSE/BSE</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-date-fns@3.0.0/dist/chartjs-adapter-date-fns.bundle.min.js"></script>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="header__brand">
+            <h1>TradePro AI India</h1>
+            <span class="header__tagline">Advanced AI Trading Platform • NSE/BSE • Real-time Analytics</span>
+        </div>
+        <div class="header__stats">
+            <div class="stat-item">
+                <span class="stat-label">Portfolio Value</span>
+                <span class="stat-value" id="portfolioValue">₹12,50,000</span>
+                <span class="stat-change positive" id="portfolioChange">+₹15,750 (+1.28%)</span>
+            </div>
+            <div class="stat-item">
+                <span class="stat-label">Available Margin</span>
+                <span class="stat-value" id="buyingPower">₹2,45,000</span>
+            </div>
+            <div class="stat-item">
+                <span class="stat-label">Market Status</span>
+                <span class="stat-value market-status" id="marketStatus">
+                    <span class="status-dot active"></span>
+                    <span>NSE/BSE OPEN</span>
+                </span>
+                <div class="market-time" id="marketTime">Closes at 3:30 PM IST</div>
+            </div>
+        </div>
+        <div class="header__actions">
+            <button class="btn btn--sm btn--secondary" id="settingsBtn">⚙️ Settings</button>
+            <button class="btn btn--sm btn--primary" id="alertsBtn">🔔 Alerts <span class="alert-count">3</span></button>
+            <div class="user-profile">
+                <span>Trader India</span>
+                <div class="user-avatar">TI</div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Sidebar Navigation -->
+    <nav class="sidebar">
+        <div class="sidebar__menu">
+            <button class="sidebar__item sidebar__item--active" data-section="dashboard">
+                <span class="sidebar__icon">📊</span>
+                Market Dashboard
+            </button>
+            <button class="sidebar__item" data-section="stocks">
+                <span class="sidebar__icon">📈</span>
+                Stock Analysis
+            </button>
+            <button class="sidebar__item" data-section="trading">
+                <span class="sidebar__icon">💹</span>
+                Advanced Trading
+            </button>
+            <button class="sidebar__item" data-section="ai-predictions">
+                <span class="sidebar__icon">🤖</span>
+                AI Predictions
+            </button>
+            <button class="sidebar__item" data-section="portfolio">
+                <span class="sidebar__icon">👛</span>
+                Portfolio Manager
+            </button>
+            <button class="sidebar__item" data-section="analytics">
+                <span class="sidebar__icon">📊</span>
+                Advanced Analytics
+            </button>
+            <button class="sidebar__item" data-section="orders">
+                <span class="sidebar__icon">📋</span>
+                Order Management
+            </button>
+            <button class="sidebar__item" data-section="options">
+                <span class="sidebar__icon">🎯</span>
+                F&O Trading
+            </button>
+        </div>
+        
+        <!-- Market Overview Sidebar -->
+        <div class="sidebar__section">
+            <h4>Market Indices</h4>
+            <div class="sidebar-indices" id="sidebarIndices">
+                <!-- Populated by JavaScript -->
+            </div>
+        </div>
+
+        <!-- Watchlist -->
+        <div class="sidebar__section">
+            <h4>My Watchlist</h4>
+            <div class="sidebar-watchlist" id="sidebarWatchlist">
+                <!-- Populated by JavaScript -->
+            </div>
+            <button class="btn btn--sm btn--outline watchlist-add">+ Add Stock</button>
+        </div>
+
+        <!-- AI Alerts -->
+        <div class="sidebar__section">
+            <h4>AI Trading Alerts</h4>
+            <div class="sidebar-alerts" id="sidebarAlerts">
+                <div class="alert-item bullish">
+                    <span class="alert-symbol">RELIANCE</span>
+                    <span class="alert-message">Strong Buy Signal</span>
+                    <span class="alert-confidence">87%</span>
+                </div>
+                <div class="alert-item bearish">
+                    <span class="alert-symbol">INFY</span>
+                    <span class="alert-message">Sell Signal</span>
+                    <span class="alert-confidence">79%</span>
+                </div>
+                <div class="alert-item neutral">
+                    <span class="alert-symbol">TCS</span>
+                    <span class="alert-message">Hold Signal</span>
+                    <span class="alert-confidence">72%</span>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <!-- Market Dashboard Section -->
+        <section id="dashboard-section" class="content-section active">
+            <div class="section-header">
+                <h2>Indian Market Dashboard</h2>
+                <div class="market-status-detailed">
+                    <span class="time" id="currentTime"></span>
+                    <span class="market-hours">NSE/BSE Trading Hours: 09:15 - 15:30 IST</span>
+                    <span class="market-session" id="marketSession">Live Trading Session</span>
+                </div>
+            </div>
+
+            <!-- Market Overview Grid -->
+            <div class="dashboard-grid">
+                <!-- Major Indices Card -->
+                <div class="card market-overview">
+                    <div class="card__header">
+                        <h3>Indian Market Indices</h3>
+                        <button class="btn btn--sm btn--secondary" id="refreshIndices">🔄 Refresh</button>
+                    </div>
+                    <div class="card__body">
+                        <div class="indices-grid" id="indicesGrid">
+                            <!-- Populated by JavaScript -->
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Stock Cards Grid -->
+                <div class="card stock-cards">
+                    <div class="card__header">
+                        <h3>Top NSE Stocks</h3>
+                        <div class="stock-filters">
+                            <button class="filter-btn active" data-filter="all">All</button>
+                            <button class="filter-btn" data-filter="gainers">Gainers</button>
+                            <button class="filter-btn" data-filter="losers">Losers</button>
+                        </div>
+                    </div>
+                    <div class="card__body">
+                        <div class="stocks-grid" id="stocksGrid">
+                            <!-- Populated by JavaScript -->
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Live Chart Section -->
+                <div class="card chart-container main-chart">
+                    <div class="card__header">
+                        <h3>Live Chart - <span id="chartTitle">RELIANCE</span></h3>
+                        <div class="chart-controls">
+                            <select class="form-control" id="chartSymbol">
+                                <option value="RELIANCE">RELIANCE</option>
+                                <option value="TCS">TCS</option>
+                                <option value="HDFCBANK">HDFCBANK</option>
+                                <option value="INFY">INFY</option>
+                                <option value="ITC">ITC</option>
+                            </select>
+                            <div class="timeframe-controls">
+                                <button class="timeframe-btn" data-timeframe="1m">1M</button>
+                                <button class="timeframe-btn" data-timeframe="5m">5M</button>
+                                <button class="timeframe-btn" data-timeframe="15m">15M</button>
+                                <button class="timeframe-btn active" data-timeframe="1h">1H</button>
+                                <button class="timeframe-btn" data-timeframe="1d">1D</button>
+                            </div>
+                            <button class="btn btn--sm btn--primary" id="fullScreenChart">📊 Full Screen</button>
+                        </div>
+                    </div>
+                    <div class="card__body">
+                        <div class="chart-wrapper" style="position: relative; height: 400px;">
+                            <canvas id="liveChart"></canvas>
+                        </div>
+                        <div class="chart-indicators">
+                            <div class="indicator-group">
+                                <span class="indicator-label">RSI:</span>
+                                <span class="indicator-value" id="rsiValue">68.5</span>
+                            </div>
+                            <div class="indicator-group">
+                                <span class="indicator-label">MACD:</span>
+                                <span class="indicator-value positive" id="macdValue">+12.34</span>
+                            </div>
+                            <div class="indicator-group">
+                                <span class="indicator-label">Volume:</span>
+                                <span class="indicator-value" id="volumeValue">2.45L</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- AI Predictions Preview -->
+                <div class="card ai-predictions-preview">
+                    <div class="card__header">
+                        <h3>🤖 AI Market Predictions</h3>
+                        <button class="view-all" onclick="switchToSection('ai-predictions')">View Detailed Analysis →</button>
+                    </div>
+                    <div class="card__body">
+                        <div class="predictions-preview" id="predictionsPreview">
+                            <!-- Populated by JavaScript -->
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Market News & Sentiment -->
+                <div class="card market-news">
+                    <div class="card__header">
+                        <h3>📰 Market News & Sentiment</h3>
+                        <span class="news-source">Live from NSE, BSE & Financial Press</span>
+                    </div>
+                    <div class="card__body">
+                        <div class="news-list" id="newsList">
+                            <!-- Populated by JavaScript -->
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Sector Heatmap -->
+                <div class="card sector-heatmap">
+                    <div class="card__header">
+                        <h3>📊 Sector Performance Heatmap</h3>
+                    </div>
+                    <div class="card__body">
+                        <div class="heatmap-grid" id="sectorHeatmap">
+                            <!-- Populated by JavaScript -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Individual Stock Analysis Section -->
+        <section id="stocks-section" class="content-section">
+            <div class="section-header">
+                <h2>Individual Stock Analysis</h2>
+                <div class="stock-selector">
+                    <select class="form-control" id="stockAnalysisSelector">
+                        <option value="RELIANCE">RELIANCE - Reliance Industries Ltd</option>
+                        <option value="TCS">TCS - Tata Consultancy Services</option>
+                        <option value="HDFCBANK">HDFCBANK - HDFC Bank Limited</option>
+                        <option value="INFY">INFY - Infosys Limited</option>
+                        <option value="ITC">ITC - ITC Limited</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="stock-analysis-grid">
+                <!-- Stock Details Card -->
+                <div class="card stock-details">
+                    <div class="card__header">
+                        <h3 id="stockDetailsTitle">RELIANCE - Reliance Industries Ltd</h3>
+                        <div class="stock-actions">
+                            <button class="btn btn--sm btn--primary" id="addToWatchlist">+ Watchlist</button>
+                            <button class="btn btn--sm btn--success" id="quickBuy">Quick Buy</button>
+                            <button class="btn btn--sm btn--error" id="quickSell">Quick Sell</button>
+                        </div>
+                    </div>
+                    <div class="card__body">
+                        <div class="stock-info-grid" id="stockInfoGrid">
+                            <!-- Populated by JavaScript -->
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Advanced Chart -->
+                <div class="card advanced-chart">
+                    <div class="card__header">
+                        <h3>Advanced Technical Analysis</h3>
+                        <div class="chart-tools">
+                            <button class="tool-btn active" data-tool="candlestick">📊 Candlestick</button>
+                            <button class="tool-btn" data-tool="volume">📊 Volume</button>
+                            <button class="tool-btn" data-tool="indicators">📈 Indicators</button>
+                        </div>
+                    </div>
+                    <div class="card__body">
+                        <div class="chart-wrapper" style="position: relative; height: 500px;">
+                            <canvas id="advancedChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- AI Analysis -->
+                <div class="card ai-stock-analysis">
+                    <div class="card__header">
+                        <h3>🤖 AI Stock Analysis</h3>
+                    </div>
+                    <div class="card__body">
+                        <div id="aiStockAnalysis">
+                            <!-- Populated by JavaScript -->
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Order Placement -->
+                <div class="card quick-trade">
+                    <div class="card__header">
+                        <h3>⚡ Quick Trade</h3>
+                    </div>
+                    <div class="card__body">
+                        <div id="quickTradeForm">
+                            <!-- Quick trading form populated by JavaScript -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Enhanced Trading Section -->
+        <section id="trading-section" class="content-section">
+            <div class="section-header">
+                <h2>Advanced Trading Interface</h2>
+                <div class="trading-mode-selector">
+                    <button class="mode-btn active" data-mode="equity">Equity</button>
+                    <button class="mode-btn" data-mode="futures">Futures</button>
+                    <button class="mode-btn" data-mode="options">Options</button>
+                    <button class="mode-btn" data-mode="currency">Currency</button>
+                </div>
+            </div>
+
+            <div class="trading-layout">
+                <!-- Order Entry Panel -->
+                <div class="card order-entry-advanced">
+                    <div class="card__header">
+                        <h3>Place Order</h3>
+                        <div class="order-modes">
+                            <button class="order-mode-btn active" data-mode="regular">Regular</button>
+                            <button class="order-mode-btn" data-mode="cover">Cover Order</button>
+                            <button class="order-mode-btn" data-mode="bracket">Bracket Order</button>
+                            <button class="order-mode-btn" data-mode="amo">AMO</button>
+                        </div>
+                    </div>
+                    <div class="card__body">
+                        <form id="advancedOrderForm" class="advanced-order-form">
+                            <div class="form-group">
+                                <label class="form-label">Symbol</label>
+                                <select class="form-control" id="orderSymbol">
+                                    <option value="RELIANCE">RELIANCE</option>
+                                    <option value="TCS">TCS</option>
+                                    <option value="HDFCBANK">HDFCBANK</option>
+                                    <option value="INFY">INFY</option>
+                                    <option value="ITC">ITC</option>
+                                </select>
+                            </div>
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label class="form-label">Quantity</label>
+                                    <input type="number" class="form-control" value="1" min="1">
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label">Price (₹)</label>
+                                    <input type="number" class="form-control" value="2875.50" step="0.05">
+                                </div>
+                            </div>
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label class="form-label">Order Type</label>
+                                    <select class="form-control">
+                                        <option value="MARKET">Market</option>
+                                        <option value="LIMIT">Limit</option>
+                                        <option value="SL">Stop Loss</option>
+                                        <option value="SL-M">Stop Loss Market</option>
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label">Product Type</label>
+                                    <select class="form-control">
+                                        <option value="CNC">CNC</option>
+                                        <option value="MIS">MIS</option>
+                                        <option value="NRML">NRML</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="trade-buttons">
+                                <button type="button" class="btn btn--success btn--full-width">Buy</button>
+                                <button type="button" class="btn btn--error btn--full-width">Sell</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+
+                <!-- Market Depth & Level 2 Data -->
+                <div class="card market-depth-advanced">
+                    <div class="card__header">
+                        <h3>Market Depth - <span id="depthSymbol">RELIANCE</span></h3>
+                        <div class="depth-controls">
+                            <button class="btn btn--sm btn--secondary" id="refreshDepth">🔄</button>
+                            <button class="btn btn--sm btn--secondary" id="depthSettings">⚙️</button>
+                        </div>
+                    </div>
+                    <div class="card__body">
+                        <div class="market-depth-display" id="marketDepthDisplay">
+                            <div class="depth-table">
+                                <div class="depth-header">
+                                    <span>Bid Qty</span>
+                                    <span>Bid Price</span>
+                                    <span>Ask Price</span>
+                                    <span>Ask Qty</span>
+                                </div>
+                                <div class="depth-row">
+                                    <span class="bid-qty">1,200</span>
+                                    <span class="bid-price">2,874.00</span>
+                                    <span class="ask-price">2,875.50</span>
+                                    <span class="ask-qty">900</span>
+                                </div>
+                                <div class="depth-row">
+                                    <span class="bid-qty">800</span>
+                                    <span class="bid-price">2,873.50</span>
+                                    <span class="ask-price">2,876.00</span>
+                                    <span class="ask-qty">600</span>
+                                </div>
+                                <div class="depth-row">
+                                    <span class="bid-qty">1,500</span>
+                                    <span class="bid-price">2,873.00</span>
+                                    <span class="ask-price">2,876.50</span>
+                                    <span class="ask-qty">1,100</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Position Manager -->
+                <div class="card position-manager-advanced">
+                    <div class="card__header">
+                        <h3>Position Manager</h3>
+                        <div class="position-tabs">
+                            <button class="tab-btn active" data-pos-tab="open">Open (3)</button>
+                            <button class="tab-btn" data-pos-tab="closed">Closed Today</button>
+                            <button class="tab-btn" data-pos-tab="pnl">P&L Analysis</button>
+                        </div>
+                    </div>
+                    <div class="card__body">
+                        <div class="positions-display" id="positionsDisplay">
+                            <div class="position-item">
+                                <div class="position-symbol">RELIANCE</div>
+                                <div class="position-qty">50 Qty</div>
+                                <div class="position-pnl positive">+₹1,275</div>
+                            </div>
+                            <div class="position-item">
+                                <div class="position-symbol">HDFCBANK</div>
+                                <div class="position-qty">100 Qty</div>
+                                <div class="position-pnl positive">+₹5,430</div>
+                            </div>
+                            <div class="position-item">
+                                <div class="position-symbol">TCS</div>
+                                <div class="position-qty">25 Qty</div>
+                                <div class="position-pnl negative">-₹1,080</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Risk Management Dashboard -->
+                <div class="card risk-dashboard">
+                    <div class="card__header">
+                        <h3>🛡️ Risk Management</h3>
+                    </div>
+                    <div class="card__body">
+                        <div class="risk-metrics-grid" id="riskMetrics">
+                            <div class="risk-metric">
+                                <span class="metric-label">Portfolio Risk</span>
+                                <span class="metric-value">Medium</span>
+                            </div>
+                            <div class="risk-metric">
+                                <span class="metric-label">Margin Used</span>
+                                <span class="metric-value">67.5%</span>
+                            </div>
+                            <div class="risk-metric">
+                                <span class="metric-label">Max Drawdown</span>
+                                <span class="metric-value">-8.2%</span>
+                            </div>
+                            <div class="risk-metric">
+                                <span class="metric-label">Sharpe Ratio</span>
+                                <span class="metric-value">1.45</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Enhanced AI Predictions Section -->
+        <section id="ai-predictions-section" class="content-section">
+            <div class="section-header">
+                <h2>🤖 AI Prediction Engine</h2>
+                <div class="model-status">
+                    <div class="model-indicator active">
+                        <span class="status-dot active"></span>
+                        <span>All Models Active</span>
+                    </div>
+                    <span>Last Updated: <span id="lastModelUpdate">12:15 PM IST</span></span>
+                    <button class="btn btn--sm btn--primary" id="refreshModels">🔄 Refresh Predictions</button>
+                </div>
+            </div>
+
+            <div class="ai-predictions-layout">
+                <!-- AI Models Performance -->
+                <div class="card models-performance">
+                    <div class="card__header">
+                        <h3>📊 AI Models Performance</h3>
+                    </div>
+                    <div class="card__body">
+                        <div class="models-grid" id="modelsGrid">
+                            <!-- AI models populated by JavaScript -->
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Detailed Predictions -->
+                <div class="card predictions-detailed">
+                    <div class="card__header">
+                        <h3>🎯 Market Predictions</h3>
+                        <div class="prediction-filters">
+                            <select class="form-control" id="predictionFilter">
+                                <option value="all">All Predictions</option>
+                                <option value="buy">Buy Signals</option>
+                                <option value="sell">Sell Signals</option>
+                                <option value="high-confidence">High Confidence (>80%)</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="card__body">
+                        <div class="predictions-list" id="detailedPredictionsList">
+                            <!-- Detailed predictions populated by JavaScript -->
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Confidence Analysis -->
+                <div class="card confidence-analysis">
+                    <div class="card__header">
+                        <h3>📈 Confidence Analysis</h3>
+                    </div>
+                    <div class="card__body">
+                        <div class="chart-wrapper" style="position: relative; height: 300px;">
+                            <canvas id="confidenceChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Enhanced Portfolio Section -->
+        <section id="portfolio-section" class="content-section">
+            <div class="section-header">
+                <h2>👛 Portfolio Management</h2>
+                <div class="portfolio-summary-header">
+                    <div class="summary-stats">
+                        <div class="summary-stat">
+                            <span class="stat-label">Total Value</span>
+                            <span class="stat-value">₹12,50,000</span>
+                        </div>
+                        <div class="summary-stat">
+                            <span class="stat-label">Day P&L</span>
+                            <span class="stat-value positive">+₹15,750 (+1.28%)</span>
+                        </div>
+                        <div class="summary-stat">
+                            <span class="stat-label">Total P&L</span>
+                            <span class="stat-value positive">+₹1,85,600 (+17.43%)</span>
+                        </div>
+                        <div class="summary-stat">
+                            <span class="stat-label">XIRR</span>
+                            <span class="stat-value">17.43%</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="portfolio-layout">
+                <!-- Portfolio Performance Chart -->
+                <div class="card portfolio-performance">
+                    <div class="card__header">
+                        <h3>📈 Performance vs Benchmarks</h3>
+                        <div class="chart-period">
+                            <button class="period-btn" data-period="1W">1W</button>
+                            <button class="period-btn" data-period="1M">1M</button>
+                            <button class="period-btn" data-period="3M">3M</button>
+                            <button class="period-btn active" data-period="1Y">1Y</button>
+                        </div>
+                    </div>
+                    <div class="card__body">
+                        <div class="chart-wrapper" style="position: relative; height: 350px;">
+                            <canvas id="portfolioChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Holdings Breakdown -->
+                <div class="card holdings-detailed">
+                    <div class="card__header">
+                        <h3>📊 Holdings Breakdown</h3>
+                        <button class="btn btn--sm btn--secondary" id="exportHoldings">📄 Export</button>
+                    </div>
+                    <div class="card__body">
+                        <div class="holdings-table" id="holdingsTable">
+                            <div class="holdings-header">
+                                <span>Stock</span>
+                                <span>Quantity</span>
+                                <span>Avg Price</span>
+                                <span>Current Price</span>
+                                <span>P&L</span>
+                            </div>
+                            <div class="holding-row">
+                                <span class="stock-symbol">RELIANCE</span>
+                                <span>50</span>
+                                <span>₹2,850.00</span>
+                                <span>₹2,875.50</span>
+                                <span class="positive">+₹1,275</span>
+                            </div>
+                            <div class="holding-row">
+                                <span class="stock-symbol">HDFCBANK</span>
+                                <span>100</span>
+                                <span>₹1,600.00</span>
+                                <span>₹1,654.30</span>
+                                <span class="positive">+₹5,430</span>
+                            </div>
+                            <div class="holding-row">
+                                <span class="stock-symbol">TCS</span>
+                                <span>25</span>
+                                <span>₹4,200.00</span>
+                                <span>₹4,156.80</span>
+                                <span class="negative">-₹1,080</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Asset Allocation -->
+                <div class="card asset-allocation">
+                    <div class="card__header">
+                        <h3>🥧 Asset Allocation</h3>
+                    </div>
+                    <div class="card__body">
+                        <div class="allocation-display" id="allocationDisplay">
+                            <div class="allocation-chart" style="position: relative; height: 200px;">
+                                <canvas id="allocationChart"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Analytics Section -->
+        <section id="analytics-section" class="content-section">
+            <div class="section-header">
+                <h2>📊 Advanced Analytics</h2>
+            </div>
+
+            <div class="analytics-layout">
+                <!-- Performance Metrics -->
+                <div class="card performance-metrics-detailed">
+                    <div class="card__header">
+                        <h3>📈 Performance Metrics</h3>
+                    </div>
+                    <div class="card__body">
+                        <div class="metrics-display" id="performanceMetrics">
+                            <div class="metric-item">
+                                <span class="metric-label">Total Return</span>
+                                <span class="metric-value positive">17.43%</span>
+                            </div>
+                            <div class="metric-item">
+                                <span class="metric-label">Alpha</span>
+                                <span class="metric-value">2.15</span>
+                            </div>
+                            <div class="metric-item">
+                                <span class="metric-label">Beta</span>
+                                <span class="metric-value">1.08</span>
+                            </div>
+                            <div class="metric-item">
+                                <span class="metric-label">Sharpe Ratio</span>
+                                <span class="metric-value">1.45</span>
+                            </div>
+                            <div class="metric-item">
+                                <span class="metric-label">Max Drawdown</span>
+                                <span class="metric-value negative">-8.2%</span>
+                            </div>
+                            <div class="metric-item">
+                                <span class="metric-label">Volatility</span>
+                                <span class="metric-value">12.4%</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Tax Analysis -->
+                <div class="card tax-analysis-detailed">
+                    <div class="card__header">
+                        <h3>💰 Tax Analysis & Planning</h3>
+                    </div>
+                    <div class="card__body">
+                        <div class="tax-display" id="taxAnalysis">
+                            <div class="tax-item">
+                                <span class="tax-label">Short Term Capital Gains</span>
+                                <span class="tax-value">₹45,600</span>
+                            </div>
+                            <div class="tax-item">
+                                <span class="tax-label">Long Term Capital Gains</span>
+                                <span class="tax-value">₹1,40,000</span>
+                            </div>
+                            <div class="tax-item">
+                                <span class="tax-label">Estimated Tax Liability</span>
+                                <span class="tax-value">₹20,880</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Compliance Status -->
+                <div class="card compliance-detailed">
+                    <div class="card__header">
+                        <h3>✅ SEBI Compliance Status</h3>
+                    </div>
+                    <div class="card__body">
+                        <div class="compliance-display" id="complianceStatus">
+                            <div class="compliance-item">
+                                <span class="compliance-check">✅</span>
+                                <span>KYC Documents Updated</span>
+                            </div>
+                            <div class="compliance-item">
+                                <span class="compliance-check">✅</span>
+                                <span>PAN Linked</span>
+                            </div>
+                            <div class="compliance-item">
+                                <span class="compliance-check">✅</span>
+                                <span>Risk Profiling Complete</span>
+                            </div>
+                            <div class="compliance-item">
+                                <span class="compliance-check">⚠️</span>
+                                <span>Nominee Details Pending</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Order Management Section -->
+        <section id="orders-section" class="content-section">
+            <div class="section-header">
+                <h2>📋 Order Management</h2>
+                <div class="order-actions">
+                    <button class="btn btn--sm btn--secondary" id="cancelAllOrders">Cancel All Pending</button>
+                    <button class="btn btn--sm btn--primary" id="exportOrders">📄 Export Orders</button>
+                </div>
+            </div>
+
+            <div class="orders-layout">
+                <div class="card orders-management">
+                    <div class="card__header">
+                        <h3>Order Book</h3>
+                        <div class="order-tabs">
+                            <button class="tab-btn active" data-order-tab="pending">Pending (2)</button>
+                            <button class="tab-btn" data-order-tab="executed">Executed Today</button>
+                            <button class="tab-btn" data-order-tab="history">History</button>
+                        </div>
+                    </div>
+                    <div class="card__body">
+                        <div class="orders-table-container" id="ordersTableContainer">
+                            <div class="orders-table">
+                                <div class="order-header">
+                                    <span>Symbol</span>
+                                    <span>Side</span>
+                                    <span>Quantity</span>
+                                    <span>Price</span>
+                                    <span>Status</span>
+                                    <span>Action</span>
+                                </div>
+                                <div class="order-row">
+                                    <span>RELIANCE</span>
+                                    <span class="buy-side">BUY</span>
+                                    <span>10</span>
+                                    <span>₹2,850.00</span>
+                                    <span class="status-pending">PENDING</span>
+                                    <span><button class="btn btn--sm btn--error">Cancel</button></span>
+                                </div>
+                                <div class="order-row">
+                                    <span>TCS</span>
+                                    <span class="sell-side">SELL</span>
+                                    <span>5</span>
+                                    <span>₹4,200.00</span>
+                                    <span class="status-pending">PENDING</span>
+                                    <span><button class="btn btn--sm btn--error">Cancel</button></span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- F&O Trading Section -->
+        <section id="options-section" class="content-section">
+            <div class="section-header">
+                <h2>🎯 Futures & Options Trading</h2>
+                <div class="fo-selector">
+                    <select class="form-control" id="foUnderlyingSelector">
+                        <option value="NIFTY">NIFTY 50</option>
+                        <option value="BANKNIFTY">BANK NIFTY</option>
+                        <option value="RELIANCE">RELIANCE</option>
+                        <option value="TCS">TCS</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="fo-layout">
+                <!-- Options Chain -->
+                <div class="card options-chain">
+                    <div class="card__header">
+                        <h3>📊 Options Chain</h3>
+                        <div class="chain-controls">
+                            <select class="form-control" id="expirySelector">
+                                <option value="30-Jul-2025">30-Jul-2025</option>
+                                <option value="06-Aug-2025">06-Aug-2025</option>
+                                <option value="13-Aug-2025">13-Aug-2025</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="card__body">
+                        <div class="options-chain-display" id="optionsChainDisplay">
+                            <div class="options-chain-table">
+                                <div class="chain-header">
+                                    <span>Call OI</span>
+                                    <span>Call LTP</span>
+                                    <span>Strike</span>
+                                    <span>Put LTP</span>
+                                    <span>Put OI</span>
+                                </div>
+                                <div class="chain-row">
+                                    <span>45,600</span>
+                                    <span>285.75</span>
+                                    <span class="strike-price">24000</span>
+                                    <span>15.20</span>
+                                    <span>123,400</span>
+                                </div>
+                                <div class="chain-row atm">
+                                    <span>78,900</span>
+                                    <span>156.30</span>
+                                    <span class="strike-price">24500</span>
+                                    <span>78.45</span>
+                                    <span>156,800</span>
+                                </div>
+                                <div class="chain-row">
+                                    <span>156,700</span>
+                                    <span>89.60</span>
+                                    <span class="strike-price">25000</span>
+                                    <span>198.75</span>
+                                    <span>89,300</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- F&O Positions -->
+                <div class="card fo-positions">
+                    <div class="card__header">
+                        <h3>📈 F&O Positions</h3>
+                    </div>
+                    <div class="card__body">
+                        <div class="fo-positions-display" id="foPositionsDisplay">
+                            <div class="fo-position-item">
+                                <div class="position-details">
+                                    <span class="symbol">NIFTY24JUL24500CE</span>
+                                    <span class="quantity">50 Qty</span>
+                                </div>
+                                <div class="position-pnl positive">+₹4,500</div>
+                            </div>
+                            <div class="fo-position-item">
+                                <div class="position-details">
+                                    <span class="symbol">BANKNIFTY24JUL51000PE</span>
+                                    <span class="quantity">25 Qty</span>
+                                </div>
+                                <div class="position-pnl negative">-₹2,300</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Greeks Calculator -->
+                <div class="card greeks-calculator">
+                    <div class="card__header">
+                        <h3>🧮 Greeks Calculator</h3>
+                    </div>
+                    <div class="card__body">
+                        <div class="greeks-display" id="greeksDisplay">
+                            <div class="greeks-grid">
+                                <div class="greek-item">
+                                    <span class="greek-label">Delta:</span>
+                                    <span class="greek-value">0.65</span>
+                                </div>
+                                <div class="greek-item">
+                                    <span class="greek-label">Gamma:</span>
+                                    <span class="greek-value">0.012</span>
+                                </div>
+                                <div class="greek-item">
+                                    <span class="greek-label">Theta:</span>
+                                    <span class="greek-value">-12.5</span>
+                                </div>
+                                <div class="greek-item">
+                                    <span class="greek-label">Vega:</span>
+                                    <span class="greek-value">8.9</span>
+                                </div>
+                                <div class="greek-item">
+                                    <span class="greek-label">IV:</span>
+                                    <span class="greek-value">18.45%</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Stock Detail Modal -->
+    <div class="modal hidden" id="stockModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 id="modalStockTitle">Stock Details</h3>
+                <button class="modal-close" id="closeModal">&times;</button>
+            </div>
+            <div class="modal-body" id="modalStockContent">
+                <!-- Stock details populated dynamically -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Settings Modal -->
+    <div class="modal hidden" id="settingsModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>⚙️ Platform Settings</h3>
+                <button class="modal-close" id="closeSettingsModal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="settings-grid">
+                    <div class="setting-group">
+                        <h4>Display Preferences</h4>
+                        <label class="setting-item">
+                            <input type="checkbox" id="darkMode" checked>
+                            <span>Dark Mode</span>
+                        </label>
+                        <label class="setting-item">
+                            <input type="checkbox" id="realTimeUpdates" checked>
+                            <span>Real-time Price Updates</span>
+                        </label>
+                        <label class="setting-item">
+                            <input type="checkbox" id="soundAlerts">
+                            <span>Sound Alerts</span>
+                        </label>
+                    </div>
+                    <div class="setting-group">
+                        <h4>Trading Preferences</h4>
+                        <label class="setting-item">
+                            <span>Default Order Quantity</span>
+                            <input type="number" class="form-control" value="1" min="1">
+                        </label>
+                        <label class="setting-item">
+                            <span>Risk Level</span>
+                            <select class="form-control">
+                                <option>Conservative</option>
+                                <option selected>Moderate</option>
+                                <option>Aggressive</option>
+                            </select>
+                        </label>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>
